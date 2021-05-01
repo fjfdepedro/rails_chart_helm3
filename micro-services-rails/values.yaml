@@ -1,0 +1,174 @@
+# Default values for micro-services-rails.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+railsmongo:
+  name: railsmongo
+  deployment:
+    runasuser: 1000
+    runasgroup: 3000
+    fsgroup: 2000
+    container_name: railsmongo
+    image: fjfdepedro/rails_mongo:3
+    user_mongo: mongo
+    pass_mongo: mongo
+    user_rabbitmq: rabbitmq
+    pass_rabbitmq: rabbitmq
+  service:
+    port: 3000
+
+railspostgres:
+  name: railspostgres
+  deployment:
+    runasuser: 1000
+    runasgroup: 3000
+    fsgroup: 2000
+    container_name: railspostgres
+    image: fjfdepedro/rails_postgres:6
+    rails_env_value: production
+    database_name: postgres
+    database_user: postgres
+    database_pass: postgres
+    database_host: postgres
+  service:
+    port: 3002
+
+mongo:
+  name: mongodb
+  deployment:
+    containers:
+      name: mongodb
+      image: mongo:4.2.8
+      mongo_data_dir: /data/db
+      mongo_log_dir: /dev/null
+      mongo_initdb_database: rails_mongo
+      mongodb_user: root
+      mongodb_pass: pass
+      mount_path: /data/db   
+      containerport: 27017
+    volume:
+      pvc_mountpath: /db/mongo
+      volumes_name: mongo-pvc
+  service:
+    ports: 27017
+
+postgres:
+  name: postgres
+  deployment:
+    containers:
+    - name: postgres
+      image: postgres
+      env:
+      - name: DATABASE_NAME
+        value: postgres
+      - name: DATABASE_USER
+        value: postgres
+      - name: DATABASE_PASSWORD
+        value: postgres
+      - name: PGHOST
+        value: postgres
+      - name: PGUSER
+        value: postgres
+      volumemounts:
+        name: postgres-persistent-storage
+        mountpath: /var/lib/postgres
+      volumes:
+        claimname: postgres-pvc
+  service:
+    ports: 3306
+
+
+rabbitmq:
+  name: rabbitmq
+  deployment:
+    containers:
+      image: rabbitmq:3.8.2-management
+  service:
+    ports:
+      main:
+        port: 5672
+        name: main-port
+        target: 5672
+      admin:
+        port: 15672
+        name: admin-port
+        target: 15672
+
+
+
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

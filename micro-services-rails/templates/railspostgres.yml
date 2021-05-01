@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.railspostgres.name }}
+  labels:
+    stack: p3
+spec:
+  # strategy:
+  #   type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Values.railspostgres.name }}
+  # replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: {{ .Values.railspostgres.name }}
+        stack: p3
+    spec:
+      containers:
+      - name: {{ .Values.railspostgres.name }}
+        image: {{ .Values.railspostgres.deployment.image }}
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.railspostgres.deployment.rails_env_value }}
+        - name: DATABASE_NAME
+          value: {{ .Values.railspostgres.deployment.database_name }}
+        - name: DATABASE_USER
+          value: {{ .Values.railspostgres.deployment.database_user }}
+        - name: DATABASE_PASSWORD
+          value: {{ .Values.railspostgres.deployment.database_pass }}
+        - name: DATABASE_HOST
+          value: {{ .Values.railspostgres.deployment.database_host }}
+        ports:
+          - containerPort: {{ .Values.railspostgres.service.port }}
+        readinessProbe: 
+          httpGet:
+            path: /products
+            port: {{ .Values.railspostgres.service.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.railspostgres.name }}
+  labels:
+    app: {{ .Values.railspostgres.name }}
+spec:
+  ports:
+    - port: {{ .Values.railspostgres.service.port }}
+  selector:
+    app: {{ .Values.railspostgres.name }}
+  type: LoadBalancer

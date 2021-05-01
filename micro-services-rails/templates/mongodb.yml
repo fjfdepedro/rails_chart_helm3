@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mongo.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.mongo.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mongo.name }}
+    spec:
+      containers:
+      - name: {{ .Values.mongo.deployment.containers.name }}
+        image: {{ .Values.mongo.deployment.containers.image }}
+        imagePullPolicy: Always
+        env:
+        - name: MONGO_DATA_DIR
+          value: {{ .Values.mongo.deployment.containers.mongo_data_dir }}
+        - name: MONGO_LOG_DIR
+          value: {{ .Values.mongo.deployment.containers.mongo_log_dir }}
+        - name: MONGO_INITDB_DATABASE
+          value: {{ .Values.mongo.deployment.containers.mongo_initdb_database }}
+        - name: MONGODB_USER
+          value: {{ .Values.mongo.deployment.containers.mongodb_user }}
+        - name: MONGODB_PASS
+          value: {{ .Values.mongo.deployment.containers.mongodb_pass }}
+        volumeMounts:
+          - name: mongodb-volume 
+            mountPath: "{{ .Values.mongo.deployment.containers.mount_path }}"            
+      volumes:
+        - name: mongodb-volume
+          persistentVolumeClaim:
+            claimName: pvc-mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mongo.name }}
+spec:
+  ports:
+  - port: {{ .Values.mongo.service.ports }}
+  selector:
+    app: {{ .Values.mongo.name }}
+  type: ClusterIP
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-mongodb
+spec:
+  storageClassName: {{ .Values.mongo.name }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-mongodb
+spec:
+  storageClassName: {{ .Values.mongo.name }}
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "{{ .Values.mongo.deployment.volume.pvc_mountpath }}"

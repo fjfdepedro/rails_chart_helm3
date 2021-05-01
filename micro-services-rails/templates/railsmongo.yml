@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.railsmongo.name }}
+  labels:
+    stack: p3
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.railsmongo.name }}
+  # replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: {{ .Values.railsmongo.name }}
+        stack: p3
+    spec:
+      containers:
+      - name: {{ .Values.railsmongo.name }}
+        image: {{ .Values.railsmongo.deployment.image }}
+        imagePullPolicy: Always
+        env:
+        - name: {{ .Values.railsmongo.deployment.user_mongo }}
+          value: {{ .Values.railsmongo.deployment.pass_mongo }}
+        - name: {{ .Values.railsmongo.deployment.user_rabbitmq }}
+          value: {{ .Values.railsmongo.deployment.pass_rabbitmq }}
+        ports:
+          - containerPort: {{ .Values.railsmongo.service.port }}
+        readinessProbe: 
+          httpGet:
+            path: /products
+            port: {{ .Values.railsmongo.service.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.railsmongo.deployment.container_name }}
+  labels:
+    app: {{ .Values.railsmongo.deployment.container_name }}
+spec:
+  ports:
+    - port: {{ .Values.railsmongo.service.port }}
+  selector:
+    app: {{ .Values.railsmongo.name }}
+  type: LoadBalancer
