@@ -1,4 +1,4 @@
-# rails_chart_helm3
+# Manifiestos de Helm 3 para los microservicios
 
 Manifiestos de Helm 3 para las aplicaciones Rails con MongoDB, Postgres y RabbitMQ
 Tenemos las dos aplicaciones dockerizadas en Docker Hub:
