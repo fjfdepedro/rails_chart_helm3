@@ -58,27 +58,15 @@ postgres:
   name: postgres
   deployment:
     containers:
-    - name: postgres
-      image: postgres
-      env:
-      - name: DATABASE_NAME
-        value: postgres
-      - name: DATABASE_USER
-        value: postgres
-      - name: DATABASE_PASSWORD
-        value: postgres
-      - name: PGHOST
-        value: postgres
-      - name: PGUSER
-        value: postgres
-      volumemounts:
-        name: postgres-persistent-storage
-        mountpath: /var/lib/postgres
-      volumes:
-        claimname: postgres-pvc
+      image: postgres:10.4
+      postgres_user: postgres
+      postgres_password: postgres
+      postgres_db: postgres
+      postgres_volume_mount: /data/db
   service:
-    ports: 3306
-
+    port_service: 5432
+  persistent_volume:
+    host_path: /db/postgres
 
 rabbitmq:
   name: rabbitmq

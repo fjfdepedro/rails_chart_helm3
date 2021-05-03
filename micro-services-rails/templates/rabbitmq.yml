@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq
+  name: {{ .Values.rabbitmq.name }}
 spec:
   selector:
     matchLabels:
-      app: rabbitmq
+      app: {{ .Values.rabbitmq.name }}
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: {{ .Values.rabbitmq.name }}
     spec:
       containers:
-      - name: rabbitmq
-        image: rabbitmq:3-management
+      - name: {{ .Values.rabbitmq.name }}
+        image: {{ .Values.rabbitmq.deployment.containers.image }}
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq
+  name: {{ .Values.rabbitmq.name }}
 spec:
   ports:
     - name: port1
-      port: 5672
+      port: {{ .Values.rabbitmq.service.ports.main.port }}
     - name: port2
-      port: 15672
+      port: {{ .Values.rabbitmq.service.ports.admin.port }}
   selector:
-    app: rabbitmq
+    app: {{ .Values.rabbitmq.name }}
   type: ClusterIP

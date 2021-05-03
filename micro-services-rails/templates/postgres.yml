@@ -2,30 +2,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: {{ .Values.postgres.name }}
 spec:
   selector:
     matchLabels:
-      app: postgres
+      app: {{ .Values.postgres.name }}
   template:
     metadata:
       labels:
-        app: postgres
+        app: {{ .Values.postgres.name }}
     spec:
       containers:
-      - name: postgres
+      - name: {{ .Values.postgres.name }}
         image: postgres:10.4
         imagePullPolicy: Always
         env:
         - name: POSTGRES_USER
-          value: postgres
+          value: {{ .Values.postgres.deployment.containers.postgres_user }}
         - name: POSTGRES_PASSWORD
-          value: postgres
+          value: {{ .Values.postgres.deployment.containers.postgres_password }}
         - name: POSTGRES_DB
-          value: postgres
+          value: {{ .Values.postgres.deployment.containers.postgres_db }}
         volumeMounts:
           - name: postgres-volume 
-            mountPath: "/data/db"   
+            mountPath: "{{ .Values.postgres.deployment.containers.postgres_volume_mount }}"   
       volumes:
         - name: postgres-volume
           persistentVolumeClaim:
@@ -35,10 +35,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: {{ .Values.postgres.name }}
 spec:
   ports:
-  - port: 5432
+  - port: {{ .Values.postgres.service.port_service }}
   selector:
     app: postgres
   type: ClusterIP
@@ -48,7 +48,7 @@ apiVersion: v1
 metadata:
   name: pvc-postgres
 spec:
-  storageClassName: postgres
+  storageClassName: {{ .Values.postgres.name }}
   accessModes:
     - ReadWriteOnce
   resources:
@@ -61,10 +61,10 @@ apiVersion: v1
 metadata:
   name: pv-postgres
 spec:
-  storageClassName: postgres
+  storageClassName: {{ .Values.postgres.name }}
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/db/postgres"
+    path: "{{ .Values.postgres.persistent_volume.host_path }}"
