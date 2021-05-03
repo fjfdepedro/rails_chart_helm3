@@ -8,8 +8,10 @@ https://hub.docker.com/repository/docker/fjfdepedro/rails_postgres
 https://hub.docker.com/repository/docker/fjfdepedro/rails_mongo
 
 Se empaqueta:
-#helm package ./micro-services-rails/
-
+```console
+$ helm package ./micro-services-rails/
+```
 Y la instalación se realiza de la siguiente manera:
-#helm install --generate-name micro-services-rails-0.1.0.tgz 
-
+```console
+$ helm install --generate-name micro-services-rails-0.1.0.tgz 
+```
