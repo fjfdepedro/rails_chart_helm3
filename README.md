@@ -15,3 +15,9 @@ Y la instalación se realiza de la siguiente manera:
 ```sh
 $ helm install --generate-name micro-services-rails-0.1.0.tgz 
 ```
+
+## Instalación de Flux
+
+## Instalación de Flagger con Istio
+
+## Manifiestos de configuración Kustomize y GitRepository
