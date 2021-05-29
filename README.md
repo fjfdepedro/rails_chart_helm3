@@ -33,15 +33,15 @@ flux bootstrap github \
 
 Seguimos la documentación de instalación de Flagger con Istio: https://docs.flagger.app/install/flagger-install-on-kubernetes
 
-Add Flagger Helm repository
+Añadir Flagger Helm repository
 ```
 helm repo add flagger https://flagger.app
 ```
-Install Flagger's Canary CRD:
+Instalar Canary custom resource de Flagger, que es a partir del cual podremos crear nuestor Canary resources:
 ```
 kubectl apply -f https://raw.githubusercontent.com/fluxcd/flagger/main/artifacts/flagger/crd.yaml
 ```
-Deploy Flagger for Istio:
+Crear el deployment de Flagger con Istio:
 ```
 helm upgrade -i flagger flagger/flagger \
 --namespace=istio-system \
@@ -52,3 +52,32 @@ helm upgrade -i flagger flagger/flagger \
 
 
 ## Manifiestos de configuración Kustomize y GitRepository
+
+GitRepository:
+```
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: rails-chart-helm3-repo
+  namespace: prod
+spec:
+  interval: 5m
+  url: https://github.com/fjfdepedro/rails_chart_helm3
+  ref:
+    branch: main
+```
+Kustomize:
+```
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: rails-chart-helm3
+  namespace: prod
+spec:
+  interval: 15m
+  path: "./deploy/prod"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: rails-chart-helm3-repo
+```
