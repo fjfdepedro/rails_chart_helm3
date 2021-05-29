@@ -31,4 +31,24 @@ flux bootstrap github \
 
 ## Instalación de Flagger con Istio
 
+Seguimos la documentación de instalación de Flagger con Istio: https://docs.flagger.app/install/flagger-install-on-kubernetes
+
+Add Flagger Helm repository
+```
+helm repo add flagger https://flagger.app
+```
+Install Flagger's Canary CRD:
+```
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/flagger/main/artifacts/flagger/crd.yaml
+```
+Deploy Flagger for Istio:
+```
+helm upgrade -i flagger flagger/flagger \
+--namespace=istio-system \
+--set crd.create=false \
+--set meshProvider=istio \
+--set metricsServer=http://prometheus:9090
+```
+
+
 ## Manifiestos de configuración Kustomize y GitRepository
