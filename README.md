@@ -18,6 +18,17 @@ $ helm install --generate-name micro-services-rails-0.1.0.tgz
 
 ## Instalación de Flux
 
+Siguiendo la documentacion de FluxCD, primero nos bajamos el comando Flux y luego con 'flux bootstrap' vamos a asociar nuestro repositorio
+
+```
+flux bootstrap github \
+  --owner=fjfdepedro \
+  --repository=rails_chart_helm3 \
+  --branch=main \
+  --path=./clusters/my-cluster \
+  --personal
+```
+
 ## Instalación de Flagger con Istio
 
 ## Manifiestos de configuración Kustomize y GitRepository
