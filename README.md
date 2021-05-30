@@ -96,4 +96,4 @@ http://railspostgres-canary.prod:3002/products
 
 Y con un curl y luego un greo buscamos si en el HTML se encuentra la palabra 'Products' que es el titulo h1 de la página. Si lo encuentra entonces empezará el analisis de respuestas HTTP y medición de tiempos de respuesta.
 
-Luego en los webhooks rollout será cuando se realicen peticiones con el comando rakyll/hey. Configuraremos peticiones a la URL de antes durante un minuto, no mas de 10 peticiones por worker, y con un máximo de 1 worker concurrentes.
+Luego, por ejemplo en Canary release, los webhooks rollout será cuando se realicen peticiones con el comando rakyll/hey. Configuraremos peticiones a la URL de antes durante un minuto, no mas de 10 peticiones por worker, y con un máximo de 1 worker concurrentes.
