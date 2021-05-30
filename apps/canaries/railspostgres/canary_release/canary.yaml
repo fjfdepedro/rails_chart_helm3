@@ -20,6 +20,9 @@ spec:
   service:
     # container port
     port: 3002
+    # Istio gateways (optional)
+    gateways:
+    - istio-system/public-gateway
   # promote the canary without analysing it (default false)
   skipAnalysis: false
   analysis:
