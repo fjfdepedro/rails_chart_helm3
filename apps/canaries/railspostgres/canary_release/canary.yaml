@@ -23,6 +23,9 @@ spec:
     # Istio gateways (optional)
     gateways:
     - istio-system/public-gateway
+    # Istio virtual service host names (optional)
+    hosts:
+    - "*"
   # promote the canary without analysing it (default false)
   skipAnalysis: false
   analysis:
