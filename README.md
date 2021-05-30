@@ -9,7 +9,7 @@ https://hub.docker.com/repository/docker/fjfdepedro/rails_mongo
 
 Se empaqueta:
 ```sh
-$ helm package ./micro-services-rails/
+$ helm package ./apps/micro-services-rails/
 ```
 Y la instalación se realiza de la siguiente manera:
 ```sh
