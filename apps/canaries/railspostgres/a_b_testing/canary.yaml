@@ -1,0 +1,75 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: railspostgres
+  namespace: prod
+spec:
+  # deployment reference
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: railspostgres
+  # the maximum time in seconds for the canary deployment
+  # to make progress before it is rollback (default 600s)
+  progressDeadlineSeconds: 120
+  # HPA reference (optional)
+  autoscalerRef:
+    apiVersion: autoscaling/v2beta1
+    kind: HorizontalPodAutoscaler
+    name: railspostgres
+  service:
+    # container port
+    port: 3002
+  # promote the canary without analysing it (default false)
+  skipAnalysis: false
+  analysis:
+    # schedule interval (default 60s)
+    interval: 1m
+    # number of iterations
+    iterations: 10
+    # max number of failed metric checks before rollback
+    threshold: 10
+    # match headers
+    match:
+      - headers:
+          user-agent:
+            regex: ".*Firefox.*"
+    metrics:
+    - name: request-success-rate
+      # minimum req success rate (non 5xx responses)
+      # percentage (0-100)
+      thresholdRange:
+        min: 99
+      interval: 1m
+    - name: request-duration
+      # maximum req duration P99
+      # milliseconds
+      thresholdRange:
+        max: 500
+      interval: 30s
+    # Istio Prometheus checks
+    metrics:
+      - name: error-rate
+        templateRef:
+          name: error-rate
+          namespace: istio-system
+        thresholdRange:
+          max: 1
+        interval: 30s
+      - name: latency
+        templateRef:
+          name: latency
+          namespace: istio-system
+        thresholdRange:
+          max: 500
+        interval: 30s
+    # tests
+    webhooks:
+      - name: load-test
+        type: rollout
+        timeout: 15s
+        url: http://flagger-loadtester.prod/
+        metadata:
+          type: cmd
+          cmd: "hey -z 1m -q 10 -c 2 -H 'User-agent: Firefox' http://railspostgres-canary.prod:3002/products"
+          logCmdOutput: "true"
