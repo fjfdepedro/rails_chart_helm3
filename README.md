@@ -75,7 +75,7 @@ metadata:
   namespace: prod
 spec:
   interval: 15m
-  path: "./deploy/prod"
+  path: "./apps"
   prune: true
   sourceRef:
     kind: GitRepository
