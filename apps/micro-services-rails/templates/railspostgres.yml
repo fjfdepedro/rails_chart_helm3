@@ -3,8 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.railspostgres.name }}
-  labels:
-    stack: p3
+  namespace: {{ .Values.namespace }}
 spec:
   # strategy:
   #   type: Recreate

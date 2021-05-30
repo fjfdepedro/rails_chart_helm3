@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.postgres.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:

@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "micro-services-rails.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "micro-services-rails.labels" . | nindent 4 }}
 spec:

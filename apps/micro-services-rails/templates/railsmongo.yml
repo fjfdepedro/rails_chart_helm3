@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.railsmongo.name }}
+  namespace: prod
   labels:
     stack: p3
 spec:

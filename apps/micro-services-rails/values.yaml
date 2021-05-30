@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+namespace: prod
+
 railsmongo:
   name: railsmongo
   deployment:
